@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.mycompany.selectionproblem;
 
 import java.util.Arrays;
@@ -19,6 +14,7 @@ public class SelectionProblem {
     private static int[] A;
     private static long start, end, elapsedMerge, elapsedIter, elapsedRecurse, elapsedMM;
     private static double mergeSeconds, iterSeconds, recSeconds, mmSeconds;
+    private static Random rand = new Random();
 
     public static void main(String[] args) {
         boolean check = true;
@@ -36,7 +32,8 @@ public class SelectionProblem {
 
             for (int j = 0; j < numExecutions; j++) {
                 for (int k : x) {
-                    k--;
+                    k--; // change k to index-based
+
                     start = System.nanoTime();
                     selectMerge(A, k);
                     end = System.nanoTime();
@@ -74,10 +71,10 @@ public class SelectionProblem {
             recSeconds = (double) elapsedRecurse / 1_000_000_000;
             mmSeconds = (double) elapsedMM / 1_000_000_000;
 
-            System.out.println("Size n = " + n + ":\n\tMergeSort: " + elapsedMerge + " nanoseconds or " + mergeSeconds 
-                    + " seconds\n\tQuicksort Iterative: " + elapsedIter + " nanoseconds or " + iterSeconds 
-                    + " seconds\n\tQuicksort Recursive: " + elapsedRecurse + " nanoseconds or " + recSeconds 
-                    + " seconds\n\tMedian of Medians: " + elapsedMM + " nanoseconds or " + mmSeconds 
+            System.out.println("Size n = " + n + ":\n\tMergeSort: " + elapsedMerge + " nanoseconds or " + mergeSeconds
+                    + " seconds\n\tQuicksort Iterative: " + elapsedIter + " nanoseconds or " + iterSeconds
+                    + " seconds\n\tQuicksort Recursive: " + elapsedRecurse + " nanoseconds or " + recSeconds
+                    + " seconds\n\tMedian of Medians: " + elapsedMM + " nanoseconds or " + mmSeconds
                     + " seconds");
 
         }
@@ -96,28 +93,28 @@ public class SelectionProblem {
 
     /**
      * This method creates and fills an array of n size and fills it with random
-     * numbers 0-99 inclusive
+     * numbers
      *
      * @param n size of array to be created
-     * @return array with random integers 0-99 inclusive
+     * @return array with random integers
      */
     private static int[] createArray(int n) {
-        Random rand = new Random();
         int[] temp = new int[n];
 
         for (int i = 0; i < n; i++) {
-            temp[i] = rand.nextInt(100);
+            temp[i] = rand.nextInt();
         }
         return temp;
     }
 
     /**
-     * Finds the kth element of an array after using merge sort
+     * Finds the kth smallest element of an array after using merge sort
      *
      * @param arr array to be sorted
      * @param k kth element to be found
      */
     private static void selectMerge(int[] arr, int k) {
+        // Create a copy of the array for to allow for multiple executions
         int[] temp = arr;
         int result;
         sort(temp, 0, temp.length - 1);
@@ -136,12 +133,10 @@ public class SelectionProblem {
         // Find sizes of two subarrays to be merged 
         int n1 = m - l + 1;
         int n2 = r - m;
-
-        /* Create temp arrays */
         int L[] = new int[n1];
         int R[] = new int[n2];
 
-        /*Copy data to temp arrays*/
+        // Copy arrays
         for (int i = 0; i < n1; ++i) {
             L[i] = arr[l + i];
         }
@@ -149,11 +144,8 @@ public class SelectionProblem {
             R[j] = arr[m + 1 + j];
         }
 
-        /* Merge the temp arrays */
-        // Initial indexes of first and second subarrays 
+        // Begin merging temp arrays
         int i = 0, j = 0;
-
-        // Initial index of merged subarry array 
         int k = l;
         while (i < n1 && j < n2) {
             if (L[i] <= R[j]) {
@@ -165,15 +157,13 @@ public class SelectionProblem {
             }
             k++;
         }
-
-        /* Copy remaining elements of L[] if any */
+        // Copy leftover elements of L
         while (i < n1) {
             arr[k] = L[i];
             i++;
             k++;
         }
-
-        /* Copy remaining elements of R[] if any */
+        // Copy leftover elements of Rs
         while (j < n2) {
             arr[k] = R[j];
             j++;
@@ -190,24 +180,26 @@ public class SelectionProblem {
      */
     private static void sort(int[] arr, int l, int r) {
         if (l < r) {
-            // Find the middle point 
+            // Find midpoint 
             int m = (l + r) / 2;
 
-            // Sort first and second halves 
+            // Sort two halves
             sort(arr, l, m);
             sort(arr, m + 1, r);
 
-            // Merge the sorted halves 
+            // Merge the sorted halves
             merge(arr, l, m, r);
         }
     }
 
     /**
+     * Finds the kth smallest element of an array using iterative Quicksort
      *
-     * @param arr
-     * @param k
+     * @param arr array to be sorted
+     * @param k element to be found
      */
     private static void selectIterative(int[] arr, int k) {
+        // Create a copy of the array for to allow for multiple executions
         int[] temp = arr;
         int result;
         quickSortIterative(temp, 0, temp.length - 1, k);
@@ -215,111 +207,85 @@ public class SelectionProblem {
     }
 
     /**
+     * Takes in a random element to pivot around
      *
-     * @param arr
-     * @param low
-     * @param high
+     * @param arr array to be manipulated
+     * @param left left bound
+     * @param right right bound
      * @return
      */
-    private static int partition(int arr[], int low, int high) {
-        int pivot = arr[high];
+    private static int partition(int[] arr, int left, int right) {
+        int pivot = arr[right];
 
-        // index of smaller element 
-        int i = (low - 1);
-        for (int j = low; j <= high - 1; j++) {
-            // If current element is smaller than or 
-            // equal to pivot 
+        int i = (left - 1);
+        for (int j = left; j <= right - 1; j++) {
+            // If current element is smaller, swap elements
             if (arr[j] <= pivot) {
                 i++;
-
-                // swap arr[i] and arr[j] 
                 int temp = arr[i];
                 arr[i] = arr[j];
                 arr[j] = temp;
             }
         }
 
-        // swap arr[i+1] and arr[high] (or pivot) 
+        // swap pivot
         int temp = arr[i + 1];
-        arr[i + 1] = arr[high];
-        arr[high] = temp;
+        arr[i + 1] = arr[right];
+        arr[right] = temp;
 
         return i + 1;
     }
 
     /**
+     * An iterative implementation of random Quicksort
      *
-     * @param arr
-     * @param l
-     * @param h
+     * @param arr array to be sorted
+     * @param left left bound
+     * @param right right bound
      */
-    private static void quickSortIterative(int arr[], int l, int h, int k) {
+    private static void quickSortIterative(int[] arr, int left, int right, int k) {
         // Create an auxiliary stack 
-        int[] stack = new int[h - l + 1];
+        int[] stack = new int[right - left + 1];
 
-        // initialize top of stack 
         int top = -1;
+        stack[++top] = left;
+        stack[++top] = right;
 
-        // push initial values of l and h to stack 
-        stack[++top] = l;
-        stack[++top] = h;
-
-        // Keep popping from stack while is not empty 
+        // While stack is non-empty, pop values
         while (top >= 0) {
-            // Pop h and l 
-            h = stack[top--];
-            l = stack[top--];
+            right = stack[top--];
+            left = stack[top--];
 
-            // Set pivot element at its correct position 
-            // in sorted array 
-            int p = partition(arr, l, h);
+            // Pick a random pivot position, move it to the end of the array
+            int temp = left + rand.nextInt(right - left);
+            swap(arr, temp, right);
+            int p = partition(arr, left, right);
             if (p == k) {
                 break;
             }
 
-            // If there are elements on left side of pivot, 
-            // then push left side to stack 
-            if (p - 1 > l) {
-                stack[++top] = l;
+            // Add in remaining elements on left side of pivot
+            if (p - 1 > left) {
+                stack[++top] = left;
                 stack[++top] = p - 1;
             }
 
-            // If there are elements on right side of pivot, 
-            // then push right side to stack 
-            if (p + 1 < h) {
+            // Add in remaining elements on right side of pivot
+            if (p + 1 < right) {
                 stack[++top] = p + 1;
-                stack[++top] = h;
+                stack[++top] = right;
             }
         }
     }
 
     /**
+     * Finds the kth smallest element in an array using recursive Quicksort
      *
-     * @param arr
-     * @param low
-     * @param high
-     */
-    private static void quickSortRecursive(int arr[], int low, int high, int k) {
-        if (low < high) {
-            /* pi is partitioning index, arr[pi] is 
-            now at right place */
-            int pi = partition(arr, low, high);
-            if (pi == k) {
-                return;
-            }
-            // Recursively sort elements before 
-            // partition and after partition 
-            quickSortRecursive(arr, low, pi - 1, k);
-            quickSortRecursive(arr, pi + 1, high, k);
-        }
-    }
-
-    /**
-     *
-     * @param arr
-     * @param k
+     * @param arr array to be sorted
+     * @param k smallest element
      */
     private static void selectRecursive(int[] arr, int k) {
+        // Create a copy of the array for to allow for multiple executions
         int[] temp = arr;
         int result;
         quickSortRecursive(temp, 0, temp.length - 1, k);
@@ -327,26 +293,54 @@ public class SelectionProblem {
     }
 
     /**
+     * A recursive implementation of Quicksort
      *
-     * @param arr
-     * @param k
+     * @param arr array to be sorted
+     * @param left left bound
+     * @param right right bound
+     */
+    private static void quickSortRecursive(int[] arr, int left, int right, int k) {
+        if (left < right) {
+            // Pick a random pivot position, move it to the end of the array
+            int temp = left + rand.nextInt(right - left);
+            swap(arr, temp, right);
+            int p = partition(arr, left, right);
+            // If the kth smallest element has been partitioned, break
+            if (p == k) {
+                return;
+            }
+            // Recursively sort elements before and after partition
+            quickSortRecursive(arr, left, p - 1, k);
+            quickSortRecursive(arr, p + 1, right, k);
+        }
+    }
+
+    /**
+     * Finds the kth smallest element in an array using recursive Quicksort and
+     * Median of Medians rule
+     *
+     * @param arr array to be sorted
+     * @param k smallest element
      */
     private static void selectMedian(int[] arr, int k) {
+        // Create a copy of the array for to allow for multiple executions
         int[] temp = arr;
         int result;
         result = kthSmallest(temp, 0, temp.length - 1, k);
     }
 
     /**
+     * Finds the median of a given array
      *
-     * @param arr
-     * @param i
-     * @param n
-     * @return
+     * @param arr array to be searched through
+     * @param i left bound
+     * @param n right bound
+     * @return the median of the given array
      */
-    private static int findMedian(int arr[], int i, int n) {
+    private static int findMedian(int[] arr, int i, int n) {
+        // Sorting array
         if (i <= n) {
-            Arrays.sort(arr, i, n); // Sort the array 
+            Arrays.sort(arr, i, n);
         } else {
             Arrays.sort(arr, n, i);
         }
@@ -354,108 +348,88 @@ public class SelectionProblem {
     }
 
     /**
+     * Finds the kth smallest element in a given array using Recursive Quicksort
+     * with Median of Medians ruling
      *
-     * @param arr
-     * @param l
-     * @param r
-     * @param k
-     * @return
+     * @param arr array to be sorted
+     * @param left left bound
+     * @param right right bound
+     * @param k kth smallest element
+     * @return the kth smallest element of the given array
      */
-    private static int kthSmallest(int arr[], int l, int r, int k) {
-        // If k is smaller than  
-        // number of elements in array 
-        if (k > 0 && k <= r - l + 1) {
-            int n = r - l + 1; // Number of elements in arr[l..r] 
+    private static int kthSmallest(int[] arr, int left, int right, int k) {
+        // k must be a valid index
+        if (k > 0 && k <= right - left + 1) {
+            // Number of elements in the bounds within the array
+            int n = right - left + 1;
 
-            // Divide arr[] in groups of size 5,  
-            // calculate median of every group 
-            //  and store it in median[] array. 
+            // Dividing the array into slices of 5 elements
             int i;
 
-            // There will be floor((n+4)/5) groups; 
+            // Using a floor of (n + 4) / 5 groups, store medians in another array
             int[] median = new int[(n + 4) / 5];
             for (i = 0; i < n / 5; i++) {
-                median[i] = findMedian(arr, l + i * 5, 5);
+                median[i] = findMedian(arr, left + i * 5, 5);
             }
 
-            // For last group with less than 5 elements 
+            // Last group with less than 5 elements
             if (i * 5 < n) {
-                median[i] = findMedian(arr, l + i * 5, n % 5);
+                median[i] = findMedian(arr, left + i * 5, n % 5);
                 i++;
             }
 
-            // Find median of all medians using recursive call. 
-            // If median[] has only one element, then no need 
-            // of recursive call 
-            int medOfMed = (i == 1) ? median[i - 1]
-                    : kthSmallest(median, 0, i - 1, i / 2);
+            // Find median of all medians recursively
+            int medOfMed = (i == 1) ? median[i - 1] : kthSmallest(median, 0, i - 1, i / 2);
 
-            // Partition the array around a random element and 
-            // get position of pivot element in sorted array 
-            int pos = partition(arr, l, r, medOfMed);
-            if (pos == k) {
-                return pos;
-            }
-
-            // If position is same as k 
-            if (pos - l == k - 1) {
+            // Partition the array around the median of medians
+            int pos = mmPartition(arr, left, right, medOfMed);
+            if (pos - left == k) {
                 return arr[pos];
             }
-            if (pos - l > k - 1) // If position is more, recur for left 
-            {
-                return kthSmallest(arr, l, pos - 1, k);
+            // Recursively partition if not found
+            if (pos - left > k) {
+                return kthSmallest(arr, left, pos - 1, k);
             }
-
-            // Else recur for right subarray 
-            return kthSmallest(arr, pos + 1, r, k - pos + l - 1);
+            return kthSmallest(arr, pos + 1, right, k - pos + left - 1);
         }
 
-        // If k is more than number of elements in array 
+        // k is out of bounds 
         return Integer.MAX_VALUE;
     }
 
     /**
+     * Partition helper for median of medians
      *
-     * @param arr
-     * @param l
-     * @param r
-     * @param x
+     * @param arr array to be sorted
+     * @param left left bound
+     * @param right right bound
+     * @param x element to be partitioned
      * @return
      */
-    private static int partition(int arr[], int l,
-            int r, int x) {
-        // Search for x in arr[l..r] and move it to end 
+    private static int mmPartition(int[] arr, int left, int right, int x) {
+        // Search for x, swap with last element in bound
         int i;
-        for (i = l; i < r; i++) {
+        for (i = left; i < right; i++) {
             if (arr[i] == x) {
                 break;
             }
         }
-        swap(arr, i, r);
+        swap(arr, i, right);
 
-        // Standard partition algorithm 
-        i = l;
-        for (int j = l; j <= r - 1; j++) {
-            if (arr[j] <= x) {
-                swap(arr, i, j);
-                i++;
-            }
-        }
-        swap(arr, i, r);
-        return i;
+        // Standard partition
+        return partition(arr, left, right);
     }
 
     /**
+     * Swaps two elements in an array
      *
-     * @param arr
-     * @param i
-     * @param j
-     * @return
+     * @param arr array with elements to be swapped
+     * @param i index of first element
+     * @param j index of second element
      */
-    private static int[] swap(int[] arr, int i, int j) {
+    private static void swap(int[] arr, int i, int j) {
         int temp = arr[i];
         arr[i] = arr[j];
         arr[j] = temp;
-        return arr;
     }
 }
