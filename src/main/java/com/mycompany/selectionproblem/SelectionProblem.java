@@ -393,6 +393,9 @@ public class SelectionProblem {
             // Partition the array around a random element and 
             // get position of pivot element in sorted array 
             int pos = partition(arr, l, r, medOfMed);
+            if (pos == k) {
+                return pos;
+            }
 
             // If position is same as k 
             if (pos - l == k - 1) {
