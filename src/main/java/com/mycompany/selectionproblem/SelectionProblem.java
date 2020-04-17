@@ -14,7 +14,7 @@ public class SelectionProblem {
     private static int[] A;
     private static long start, end, elapsedMerge, elapsedIter, elapsedRecurse, elapsedMM;
     private static double mergeSeconds, iterSeconds, recSeconds, mmSeconds;
-    private static Random rand = new Random();
+    private static final Random rand = new Random();
 
     public static void main(String[] args) {
         boolean check = true;
@@ -361,20 +361,20 @@ public class SelectionProblem {
         // k must be a valid index
         if (k > 0 && k <= right - left + 1) {
             // Number of elements in the bounds within the array
-            int n = right - left + 1;
+            int p = right - left + 1;
 
             // Dividing the array into slices of 5 elements
             int i;
 
             // Using a floor of (n + 4) / 5 groups, store medians in another array
-            int[] median = new int[(n + 4) / 5];
-            for (i = 0; i < n / 5; i++) {
+            int[] median = new int[(p + 4) / 5];
+            for (i = 0; i < p / 5; i++) {
                 median[i] = findMedian(arr, left + i * 5, 5);
             }
 
             // Last group with less than 5 elements
-            if (i * 5 < n) {
-                median[i] = findMedian(arr, left + i * 5, n % 5);
+            if (i * 5 < p) {
+                median[i] = findMedian(arr, left + i * 5, p % 5);
                 i++;
             }
 
