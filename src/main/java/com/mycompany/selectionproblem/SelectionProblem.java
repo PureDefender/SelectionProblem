@@ -432,4 +432,14 @@ public class SelectionProblem {
         arr[i] = arr[j];
         arr[j] = temp;
     }
+
+    /**
+     * Method used to verify correctness of algorithm implementations, prints an
+     * array
+     *
+     * @param arr array to be printed
+     */
+    private static void printArray(int[] arr) {
+        System.out.println(Arrays.toString(arr));
+    }
 }
