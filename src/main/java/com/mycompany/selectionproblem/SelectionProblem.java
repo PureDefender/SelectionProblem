@@ -55,9 +55,6 @@ public class SelectionProblem {
                     elapsedMM += end - start;
                 }
             }
-            // Multiplying n by 5 and 2 alternating
-            n = check ? n * 5 : n * 2;
-            check ^= true;
 
             // Taking the average times of the algorithms
             elapsedMerge = average(elapsedMerge);
@@ -76,7 +73,10 @@ public class SelectionProblem {
                     + " seconds\n\tQuicksort Recursive: " + elapsedRecurse + " nanoseconds or " + recSeconds
                     + " seconds\n\tMedian of Medians: " + elapsedMM + " nanoseconds or " + mmSeconds
                     + " seconds");
-
+            
+            // Multiplying n by 5 and 2 alternating
+            n = check ? n * 5 : n * 2;
+            check ^= true;
         }
     }
 
