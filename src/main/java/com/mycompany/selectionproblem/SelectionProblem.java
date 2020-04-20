@@ -1,4 +1,9 @@
-package com.mycompany.selectionproblem;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package selectionproblem;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -73,7 +78,7 @@ public class SelectionProblem {
                     + " seconds\n\tQuicksort Recursive: " + elapsedRecurse + " nanoseconds or " + recSeconds
                     + " seconds\n\tMedian of Medians: " + elapsedMM + " nanoseconds or " + mmSeconds
                     + " seconds");
-            
+
             // Multiplying n by 5 and 2 alternating
             n = check ? n * 5 : n * 2;
             check ^= true;
@@ -333,18 +338,14 @@ public class SelectionProblem {
      * Finds the median of a given array
      *
      * @param arr array to be searched through
-     * @param i left bound
-     * @param n right bound
+     * @param start left bound
+     * @param len right bound
      * @return the median of the given array
      */
-    private static int findMedian(int[] arr, int i, int n) {
-        // Sorting array
-        if (i <= n) {
-            Arrays.sort(arr, i, n);
-        } else {
-            Arrays.sort(arr, n, i);
-        }
-        return arr[n / 2]; // Return middle element 
+    private static int findMedian(int[] arr, int start, int len) {
+        Arrays.sort(arr, start, start + len);
+
+        return arr[start + len / 2]; // Return middle element 
     }
 
     /**
